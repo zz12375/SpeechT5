@@ -392,6 +392,10 @@ class JointPretrainingConfig(FairseqDataclass):
         default="dict.txt",
         metadata={"help": "dict used for decoding with language model, should be in cfg.data/"},
     )
+    merge_pieces: bool = field(
+        default=False,
+        metadata={"help": "whether merge short pieces"},
+    )
 
 @register_task("joint_sc2t_pretraining", dataclass=JointPretrainingConfig)
 class Jsc2tPretrainingTask(FairseqTask):
@@ -606,8 +610,9 @@ class Jsc2tPretrainingTask(FairseqTask):
             paths = [
                 f"{self.get_label_dir()}/{speech_split}.{l}" for l in self.cfg.labels
             ]
-            speech_datasets.append(
-                HubertDataset(
+            if self.cfg.merge_pieces and speech_split.find("wenetspeech") >= 0:
+                self.cfg.min_sample_size = self.cfg.min_sample_size // 2
+            hunert_dataset = HubertDataset(
                     f"{self.cfg.data}/{speech_split}.tsv",
                     sample_rate=self.cfg.sample_rate,
                     label_paths=paths,
@@ -629,7 +634,11 @@ class Jsc2tPretrainingTask(FairseqTask):
                     tgt_lang_idx=tgt_lang_idx,
                     tokenizer=self.hubert_tokenizer,
                 )
-            )
+            if self.cfg.merge_pieces and speech_split.find("wenetspeech") >= 0:
+                from speechut.data.merge_sent_dataset import MergeForwardDataset, comput_merge_information
+                sizes, merges = comput_merge_information(hunert_dataset, self.cfg.min_sample_size * 4)     # merge adjust sentence to 4s
+                hunert_dataset = MergeForwardDataset(hunert_dataset, sizes, merges)
+            speech_datasets.append(hunert_dataset)
         if len(speech_datasets) > 1:
             speech_dataset = ConcatDataset(speech_datasets)
         else:

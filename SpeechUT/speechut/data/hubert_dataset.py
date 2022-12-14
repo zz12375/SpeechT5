@@ -50,7 +50,7 @@ def parse_path(path: str) -> Tuple[str, List[int]]:
         if not Path(_path).is_file():
             raise FileNotFoundError(f"File not found: {_path}")
     assert len(slice_ptr) in {0, 1, 2}, f"Invalid path: {path}"
-    slice_ptr = [int(i) for i in slice_ptr]
+    slice_ptr = [int(i) if i.find(">") < 0 else i for i in slice_ptr]
     return _path, slice_ptr
 
 def load_audio(manifest_path, max_keep, min_keep, retry_times=5):
@@ -241,6 +241,7 @@ class HubertDataset(FairseqDataset):
         self.mbart_style_lang_id = mbart_style_lang_id
         self.retry_times = retry_times
         self.reduce_label_for_dec = reduce_label_for_dec
+        self.buffered_wav_data = (None, None, None)
         logger.info(
             f"pad_audio={pad_audio}, random_crop={random_crop}, tgt_lang_idx={self.tgt_lang_idx}, reduce_label_for_dec={reduce_label_for_dec}, "
             f"mbart_style_lang_id={mbart_style_lang_id}, normalize={normalize}, max_sample_size={self.max_sample_size}"
@@ -275,12 +276,21 @@ class HubertDataset(FairseqDataset):
                 np.random.shuffle(batches)
         return batches
     
+    def buffer_wav_data(self, wav_path):
+        if wav_path == self.buffered_wav_data[0]:
+            return self.buffered_wav_data[1:]
+        else:
+            import soundfile as sf
+            _wav, cur_sample_rate = sf.read(wav_path)
+            self.buffered_wav_data = (wav_path, _wav, cur_sample_rate)
+            return _wav, cur_sample_rate
+    
     def get_audio(self, index):
         import soundfile as sf
 
         wav_path = os.path.join(self.audio_root, self.audio_names[index])
         _path, slice_ptr = parse_path(wav_path)
-        if len(slice_ptr) == 1:
+        if len(slice_ptr) == 1 and isinstance(slice_ptr[0], int):
             import kaldiio
             feat = kaldiio.load_mat(wav_path)
             feat = torch.from_numpy(feat).float()
@@ -288,6 +298,16 @@ class HubertDataset(FairseqDataset):
                 with torch.no_grad():
                     feat = F.layer_norm(feat, feat.shape[-1])
             return feat
+        
+        elif len(slice_ptr) == 1 and isinstance(slice_ptr[0], str):
+            start, end = slice_ptr[0].split(">")
+            _wav, cur_sample_rate = self.buffer_wav_data(_path)
+            start = int(float(start) * cur_sample_rate)
+            end = int(float(end) * cur_sample_rate)
+            wav = _wav[start: end]
+            wav = torch.from_numpy(wav).float()
+            wav = self.postprocess(wav, cur_sample_rate)
+            return wav
         else:
             if len(slice_ptr) == 2:
                 byte_data = read_from_stored_zip(_path, slice_ptr[0], slice_ptr[1])
