@@ -40,6 +40,7 @@ PYTHONPATH=$PWD/fairseq python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   dataset.max_tokens=1400000 \
   distributed_training.distributed_world_size=${world_size} \
   optimization.update_freq=[${update_freq}] \
+  distributed_training.ddp_backend="legacy_ddp" \
   \
   common.tensorboard_logdir=$MODEL_DIR \
   checkpoint.save_dir=$MODEL_DIR \
