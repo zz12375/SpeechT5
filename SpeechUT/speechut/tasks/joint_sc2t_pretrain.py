@@ -636,7 +636,7 @@ class Jsc2tPretrainingTask(FairseqTask):
                 )
             if self.cfg.merge_pieces and speech_split.find("wenetspeech") >= 0:
                 from speechut.data.merge_sent_dataset import MergeForwardDataset, comput_merge_information
-                sizes, merges = comput_merge_information(hunert_dataset, self.cfg.min_sample_size * 8)     # merge adjust sentence to 8s
+                sizes, merges = comput_merge_information(hunert_dataset, self.cfg.min_sample_size * 6)     # merge adjust sentence to 6s
                 hunert_dataset = MergeForwardDataset(hunert_dataset, sizes, merges)
             speech_datasets.append(hunert_dataset)
         if len(speech_datasets) > 1:
@@ -707,6 +707,7 @@ class Jsc2tPretrainingTask(FairseqTask):
             max_tokens_ratio=max_tokens_ratios,
             seed=self.cfg.text_cfg.seed,
             sort_indices=True,
+            check_length=True,
         )
 
 

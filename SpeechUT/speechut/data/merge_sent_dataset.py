@@ -164,8 +164,8 @@ class MergeForwardDataset(FairseqDataset):
         
         dur_wav = wav.size(0) / self.dataset.sample_rate
         dur_label = labels[0].size(0) / self.dataset.label_rates[0]
-        if abs(dur_wav - dur_label) > 0.1:
-            logger.warning(f"audio and label duration differ too much: (|{dur_wav} - {dur_label}| > 0.1) in sample index {self.merges[index]} wirh sizes {self.sizes[index]}")
+        if self.epoch == 1 and abs(dur_wav - dur_label) > 0.2:
+            logger.warning(f"audio and label duration differ too much: (|{dur_wav} - {dur_label}| > 0.2) in sample index {self.merges[index]} wirh sizes {self.sizes[index]}")
         
         return {"id": index, "source": wav, "label_list": labels}
 
