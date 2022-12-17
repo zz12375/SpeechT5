@@ -34,7 +34,7 @@ PYTHONPATH=$PWD/fairseq python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   criterion.u2t_ed_weight=1.0 \
   criterion.u2t_ctc_weight=0 \
   \
-  dataset.train_subset=\"wenetspeech_train_l+aic.zh-en,mt8corpus_filt01.zh-en\" \
+  dataset.train_subset=\"wenetspeech_train_l_chunk+aic.zh-en,mt8corpus_filt01.zh-en\" \
   dataset.valid_subset=\"wenet_dev+newstest2020.zh-en\" \
   dataset.num_workers=0 \
   dataset.max_tokens=1200000 \
