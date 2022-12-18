@@ -28,6 +28,7 @@ PYTHONPATH=$PWD/fairseq python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   task.label_dir=$DATA_DIR \
   task.text_cfg.text_data=$TEXT_DATA_DIR \
   +task.merge_pieces=True \
+  task.text_cfg.tokens_per_sample=512 \
   \
   model.add_text_ctc=false \
   model.text_transformer.share_decoder_input_output_embed=true \
@@ -37,10 +38,11 @@ PYTHONPATH=$PWD/fairseq python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   dataset.train_subset=\"wenetspeech_train_l_chunk+aic.zh-en,mt8corpus_filt01.zh-en\" \
   dataset.valid_subset=\"wenet_dev+newstest2020.zh-en\" \
   dataset.num_workers=0 \
-  dataset.max_tokens=1200000 \
+  dataset.max_tokens=1100000 \
   distributed_training.distributed_world_size=${world_size} \
   optimization.update_freq=[${update_freq}] \
   distributed_training.ddp_backend="legacy_ddp" \
+  checkpoint.save_interval=1 \
   \
   common.tensorboard_logdir=$MODEL_DIR \
   checkpoint.save_dir=$MODEL_DIR \
