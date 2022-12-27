@@ -328,6 +328,7 @@ class HubertDataset(FairseqDataset):
 
             wav = torch.from_numpy(wav).float()
             wav = self.postprocess(wav, cur_sample_rate)
+            assert wav.size(0) > 1000, f"short wav ({wav.size(0)})! {index} {wav_path}"
             return wav
 
     def get_label(self, index, label_idx):
@@ -397,8 +398,8 @@ class HubertDataset(FairseqDataset):
         if self.add_decoder_target:
             if self.fine_tuning:
                     decoder_label = [
-                        torch.cat((targets_list[0][i, :lengths_list[0][i]], torch.tensor([self.tgt_dict.eos()])), 0).long()
-                        for i in range(targets_list[0].size(0))
+                        torch.cat((targets_list[-1][i, :lengths_list[-1][i]], torch.tensor([self.tgt_dict.eos()])), 0).long()
+                        for i in range(targets_list[-1].size(0))
                     ]
             else:
                 if self.tokenizer is not None:
