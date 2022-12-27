@@ -37,7 +37,7 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   distributed_training.distributed_world_size=${world_size} \
   \
   dataset.max_tokens=1200000 \
-  dataset.train_subset="wenetspeech_train_l" \
+  dataset.train_subset="wenetspeech_train_l+" \
   dataset.valid_subset="wenet_dev" \
   \
   common.tensorboard_logdir=$MODEL_DIR \

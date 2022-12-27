@@ -198,7 +198,7 @@ class MultiCorpusDataset(FairseqDataset):
                 continue
             batch[key] = self.datasets[key].collater(samples_dict[key])
 
-        return batch
+        return batch[key] if len(batch) == 1 else batch
 
 
     def num_tokens(self, index: int):

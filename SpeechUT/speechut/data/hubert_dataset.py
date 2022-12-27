@@ -579,7 +579,7 @@ class HubertDataset(FairseqDataset):
                     size = list(self.sizes[start:end])
                     tmp_indices.extend(list(np.arange(start, end)))
                     tmp_sizes.extend(size)
-                    if chunk_count % 10 == 0 or i == self.chunk_order[0]:
+                    if chunk_count % 10 == 0 or i == self.chunk_order[-1]:
                         order = [np.random.permutation(len(tmp_indices))]
                         order.append(
                             np.minimum(

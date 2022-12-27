@@ -663,7 +663,8 @@ class Jsc2tPretrainingTask(FairseqTask):
         else:
             mono_splits, mono_datasets = [], []
         
-        assert len(mono_datasets + paired_datasets) > 0, f"split {split} has no text! you should check out for that"
+        if len(mono_datasets + paired_datasets) <= 0:
+            logger.warn(f"split {split} has no text! you should check out for that")
 
         ### 3rd, if provided, create a supervised dataset with labeled data
         if len(split.split('+')) > 3 and split.split('+')[3] != '':
@@ -781,7 +782,7 @@ class Jsc2tPretrainingTask(FairseqTask):
             ~fairseq.iterators.EpochBatchIterator: a batched iterator over the
                 given dataset split
         """
-        if self.fine_tuning or not isinstance(dataset, MultiCorpusDataset):
+        if not isinstance(dataset, MultiCorpusDataset):
             return super().get_batch_iterator(
                 dataset,
                 max_tokens=max_tokens,
@@ -894,7 +895,7 @@ class Jsc2tPretrainingTask(FairseqTask):
         return size_ratio.tolist()
 
     def resample_multi_modality_dataset(self, speech_dataset, sup_dataset, mono_datasets, paired_datasets, mono_splits, paired_splits, epoch=1, train=True):
-        assert len(mono_datasets+paired_datasets) > 0, f"No text data loaded!"
+        # assert len(mono_datasets+paired_datasets) > 0, f"No text data loaded!"
 
         if len(mono_datasets) > 1 and self.cfg.text_sampling_alpha != 1.0:
             size_ratios = self._get_size_ratios(
