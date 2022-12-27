@@ -18,7 +18,7 @@ CODE_ROOT=${PWD}
 
 exp_name=${w2v_path%/*}
 exp_name=${exp_name##*/}
-MODEL_DIR="${mount}/exp/finetune_asrst_enzh/$exp_name/edctc100k_from_${cpt}_lr3e-5_bz1.2m_${world_size}gpu_${update_freq}accum"
+MODEL_DIR="${mount}/exp/finetune_asrst_enzh/$exp_name/edctc200k_from_${cpt}_lr3e-5_bz1.2m_${world_size}gpu_${update_freq}accum"
 [ -d $MODEL_DIR ] || mkdir -p $MODEL_DIR
 
 python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
@@ -32,11 +32,11 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   model.w2v_path=${w2v_path} \
   \
   optimization.lr=[0.00003] \
-  optimization.max_update=100000 \
+  optimization.max_update=200000 \
   optimization.update_freq=[${update_freq}] \
   distributed_training.distributed_world_size=${world_size} \
   \
-  dataset.max_tokens=600000 \
+  dataset.max_tokens=1200000 \
   dataset.train_subset="gigast_train_all" \
   dataset.valid_subset="gigast_test" \
   \
