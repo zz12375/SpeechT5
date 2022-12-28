@@ -18,7 +18,7 @@ CODE_ROOT=${PWD}
 
 exp_name=${w2v_path%/*}
 exp_name=${exp_name##*/}
-MODEL_DIR="${mount}/exp/finetune_asrst_zhen/$exp_name/edctc200k_from_${cpt}_lr3e-5_bz1.2m_${world_size}gpu_${update_freq}accum"
+MODEL_DIR="${mount}/exp/finetune_asrst_zhen/$exp_name/edctc200k_from_${cpt}_lr3e-5_bz1m_${world_size}gpu_${update_freq}accum"
 [ -d $MODEL_DIR ] || mkdir -p $MODEL_DIR
 
 python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
@@ -29,6 +29,7 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   task.data=$DATA_DIR \
   task.label_dir=$DATA_DIR \
   task.labels=["zh.ipa","en.ipa"] \
+  +task.min_sample_size=8000 \
   model.w2v_path=${w2v_path} \
   \
   optimization.lr=[0.00003] \
@@ -36,7 +37,7 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   optimization.update_freq=[${update_freq}] \
   distributed_training.distributed_world_size=${world_size} \
   \
-  dataset.max_tokens=1200000 \
+  dataset.max_tokens=1000000 \
   dataset.train_subset="wenetspeech_train_l+" \
   dataset.valid_subset="wenet_dev" \
   \

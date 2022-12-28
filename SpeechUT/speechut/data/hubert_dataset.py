@@ -327,6 +327,11 @@ class HubertDataset(FairseqDataset):
                     wav, cur_sample_rate = sf.read(wav_path)
 
             wav = torch.from_numpy(wav).float()
+            
+            if cur_sample_rate != self.sample_rate:
+                import torchaudio 
+                wav = torchaudio.transforms.Resample(cur_sample_rate, self.sample_rate)(wav)
+                cur_sample_rate = self.sample_rate
             wav = self.postprocess(wav, cur_sample_rate)
             assert wav.size(0) > 1000, f"short wav ({wav.size(0)})! {index} {wav_path}"
             return wav

@@ -872,6 +872,7 @@ class Jsc2tPretrainingTask(FairseqTask):
             "lm_dict": Dictionary.load(os.path.join(self.cfg.data, self.cfg.lm_dict)),
             **extra_gen_cls_kwargs
         }
+        self.target_dictionary.add_symbol("<mask>")
         return super().build_generator(
             models, args, seq_gen_cls=SequenceGenerator, extra_gen_cls_kwargs=extra_gen_cls_kwargs
         )
