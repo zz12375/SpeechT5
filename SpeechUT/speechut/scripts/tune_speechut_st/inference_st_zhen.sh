@@ -40,10 +40,11 @@ python $CODE_ROOT/fairseq/fairseq_cli/generate.py $DATA_DIR \
     \
     --beam ${beam_size} \
     --lenpen $lenpen \
-    --scoring wer --max-len-a 0.00078125 --max-len-b 200 \
+    --scoring sacrebleu --max-len-a 0.00078125 --max-len-b 200 \
 
 
 
 echo $results_path
 tail -n 1 $results_path/generate-*.txt
+cat $results_path/generate-*.txt | grep "^D-" | cut -d'-' -f2- | sort -nk1 | cut -f3- > $results_path/generate_semantic.txt
 sleep 1s

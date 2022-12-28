@@ -45,7 +45,7 @@ class SpeechUTASR(BaseFairseqModel):
         encoder = SpeechUTEncoder(cfg, task)
         return cls(cfg, encoder)
 
-    def forward(self, source, padding_mask, prev_output_tokens, **kwargs):
+    def forward(self, source, padding_mask, prev_output_tokens=None, **kwargs):
         encoder_out = self.encoder(source, padding_mask, **kwargs)
 
         x = self.encoder.final_dropout(encoder_out['encoder_out'][0])  # (T, B, C)
@@ -58,7 +58,7 @@ class SpeechUTASR(BaseFairseqModel):
 
         decoder_out = self.decoder(
             prev_output_tokens, encoder_out=encoder_out, **kwargs
-        ) if self.cfg.add_decoder else None
+        ) if self.cfg.add_decoder and prev_output_tokens else None
         
         return {
             "encoder_out_ctc": x,           # (T, B, C), for CTC loss
@@ -71,8 +71,8 @@ class SpeechUTASR(BaseFairseqModel):
 
     def get_logits(self, net_output):
         """For CTC decoding"""
-        logits = net_output["encoder_out"]
-        padding = net_output["encoder_padding_mask"]
+        logits = net_output["encoder_out_ctc"]
+        padding = net_output["padding_mask"]
         if padding is not None and padding.any():
             padding = padding.T
             logits[padding][..., 0] = 0
