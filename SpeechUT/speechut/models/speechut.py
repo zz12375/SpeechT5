@@ -201,6 +201,7 @@ class SpeechutModel(BaseFairseqModel):
         self.mix_with_unit = cfg.mix_with_unit
         self.use_pred_unit = cfg.use_pred_unit
         self.l2_embedding = cfg.l2_embedding
+        dec_dictionary = self.cutting_dictionary(text_tgt_dictionary, cfg.decoder_dict_size)
         if self.add_unit_encoder:
             assert len(unit_dictionary) == self.num_classes[0], f"unit_dictionary: {len(unit_dictionary)}, self.num_classes[0]: {self.num_classes[0]}"
             ### build unit pre-net, and shared with hubert label_embs if needed (default: False)
@@ -242,7 +243,7 @@ class SpeechutModel(BaseFairseqModel):
                         LayerNorm(cfg.text_transformer.encoder.embed_dim),
                     ),
                     nn.GELU(),
-                    nn.Linear(cfg.text_transformer.encoder.embed_dim, len(text_tgt_dictionary)),
+                    nn.Linear(cfg.text_transformer.encoder.embed_dim, len(dec_dictionary)),
                 )
 
         ### build unit2text decoder, not available for now
@@ -250,7 +251,7 @@ class SpeechutModel(BaseFairseqModel):
         self.text_transformer_cfg = cfg.text_transformer
         if self.add_decoder:
             # To make sure that the decoder dict size is the same as the fine-tuning tgt_dict size or bpe code dict size
-            dec_dictionary = self.cutting_dictionary(text_tgt_dictionary, cfg.decoder_dict_size)
+            dec_dictionary = text_tgt_dictionary
             decoder_embed_tokens = self.build_embedding(
                 dec_dictionary, cfg.text_transformer.decoder.embed_dim
             )
