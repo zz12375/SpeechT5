@@ -34,3 +34,4 @@ common_eval.path=${model_path}
 
 cat ${results_path}/viterbi/hypo.word | sort -t'-' -nk2 | cut -d'(' -f1 | sed 's| ii_3_E $||' > ${results_path}/test_all14.zh
 cp $DATA_DIR/dict.zh.ipa.txt ${results_path}/dict.txt
+echo "${results_path}/test_all14.zh"

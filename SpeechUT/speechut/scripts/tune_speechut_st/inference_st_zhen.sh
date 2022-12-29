@@ -47,4 +47,5 @@ python $CODE_ROOT/fairseq/fairseq_cli/generate.py $DATA_DIR \
 echo $results_path
 tail -n 1 $results_path/generate-*.txt
 cat $results_path/generate-*.txt | grep "^D-" | cut -d'-' -f2- | sort -nk1 | cut -f3- > $results_path/generate_semantic.txt
+echo $results_path/generate_semantic.txt
 sleep 1s
