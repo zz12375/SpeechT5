@@ -9,7 +9,7 @@ DATA_DIR=$2
 gen_set=$3
 beam_size=$4
 lenpen=$5
-[ -z $gen_set ] && gen_set="gigast_test"
+[ -z $gen_set ] && gen_set="emime_test_1"
 [ -z $beam_size ] && beam_size=10
 [ -z $lenpen ] && lenpen=1
 src_dir=${model_path%/*}
@@ -26,7 +26,7 @@ python $CODE_ROOT/fairseq/fairseq_cli/generate.py $DATA_DIR \
     --labels '["zh.ipa"]' \
     --single-target \
     --gen-subset ${gen_set} \
-    --max-tokens 2000000 \
+    --batch-size 1 \
     --num-workers 0 \
     \
     --task joint_sc2t_pretraining \
@@ -46,4 +46,6 @@ python $CODE_ROOT/fairseq/fairseq_cli/generate.py $DATA_DIR \
 
 echo $results_path
 tail -n 1 $results_path/generate-*.txt
+cat $results_path/generate-*.txt | grep "^D-" | cut -d'-' -f2- | sort -nk1 | cut -f3- > $results_path/generate_semantic.txt
+echo $results_path/generate_semantic.txt
 sleep 1s

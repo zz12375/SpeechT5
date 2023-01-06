@@ -26,7 +26,7 @@ python $CODE_ROOT/fairseq/fairseq_cli/generate.py $DATA_DIR \
     --labels '["en.ipa"]' \
     --single-target \
     --gen-subset ${gen_set} \
-    --max-tokens 2000000 \
+    --batch-size 1 \
     --num-workers 0 \
     \
     --task joint_sc2t_pretraining \
