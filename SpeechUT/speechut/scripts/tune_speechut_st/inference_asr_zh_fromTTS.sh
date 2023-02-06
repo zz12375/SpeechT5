@@ -8,6 +8,7 @@ if [ ! -f ${output_path}/asr_results/test_all14.tsv ]; then
     python ${HOME}/code/speech2speech/examples/audiolm/scripts/infer/wav2vec_manifest.py $output_path --ext wav
     mv ${output_path}/train.tsv ${output_path}/asr_results/test_all14.tsv 
     cp /modelblob/users/v-ziqzhang/dataset/S2ST/asr/zh/test_all14.zh.ltr ${output_path}/asr_results/test_all14.zh.ltr
+    # cp /mnt/default/lozhou/speechdata/emime/UEDIN_mandarin_bi_data_2010/Processed_test_data/select_xtts_zh/emime_xtts_zh.zh.ltr ${output_path}/asr_results/test_all14.zh.ltr
     sleep 5s
 fi
 wc -l ${output_path}/asr_results/test_all14.*
@@ -38,5 +39,7 @@ sleep 5s
 cat ${results_path}/hypo.word | sort -t'-' -nk 2 | cut -d'|' -f1 | sed 's| ||g' > ${results_path}/asr_results.zh
 cat ${results_path}/test_all14.zh.ltr | sed 's| ||g' | sed 's/|/ /g' > ${results_path}/asr_reference.zh
 
+sleep 5s
 bleu=`sacrebleu ${results_path}/asr_reference.zh -i ${results_path}/asr_results.zh -m bleu -b -w 4 --tokenize zh`
 echo "BLEU (4): $bleu"
+echo "BLEU (4): $bleu" > ${results_path}/bleu
