@@ -19,7 +19,7 @@ CODE_ROOT=${PWD}
 
 exp_name=${w2v_path%/*}
 exp_name=${exp_name##*/}
-MODEL_DIR="$mount/exp/finetune_covost/$exp_name/legacy_en${lang}_seed${cpt}_bz3.2m_lr1e-4"
+MODEL_DIR="$mount/exp/finetune_covost/$exp_name/legacy_en${lang}_seed${seed}_bz3.2m_lr1e-4"
 [ -d $MODEL_DIR ] || mkdir -p $MODEL_DIR
 
 max_tokens=1600000
