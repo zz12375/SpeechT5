@@ -7,7 +7,7 @@
 w2v_path=$1
 DATA_DIR=$2
 lang=$3
-cpt=$4
+seed=$4
 mount=$5
 world_size=$6
 update_freq=$7
@@ -19,7 +19,7 @@ CODE_ROOT=${PWD}
 
 exp_name=${w2v_path%/*}
 exp_name=${exp_name##*/}
-MODEL_DIR="$mount/exp/finetune_covost/$exp_name/legacy_en${lang}_from_${cpt}_bz3.2m_lr1e-4"
+MODEL_DIR="$mount/exp/finetune_covost/$exp_name/legacy_en${lang}_seed${cpt}_bz3.2m_lr1e-4"
 [ -d $MODEL_DIR ] || mkdir -p $MODEL_DIR
 
 max_tokens=1600000
@@ -31,7 +31,7 @@ python $CODE_ROOT/fairseq/fairseq_cli/train.py ${DATA_DIR} \
     --train-subset "train_st_en_${lang}_local" \
     --valid-subset "dev_st_en_${lang}_local" \
     --fp16 \
-    --seed 1 \
+    --seed $seed \
     \
     --ddp-backend no_c10d \
     --distributed-world-size ${world_size} \
