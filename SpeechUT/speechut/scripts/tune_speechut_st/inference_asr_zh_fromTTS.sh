@@ -1,14 +1,17 @@
+output_path=$1
+N=$2
+[ -z $N ] && N=1373
+
 set -e -o pipefail -u
 
-output_path=$1
 mkdir -p ${output_path}/asr_results
 
 echo "Manifest data ..."
 if [ ! -f ${output_path}/asr_results/test_all14.tsv ]; then
-    python ${HOME}/code/speech2speech/examples/audiolm/scripts/infer/wav2vec_manifest.py $output_path --ext wav
+    python ${HOME}/code2/speech2speech/examples/valle/scripts/eval_ziqzhang/asr_manifest.py $output_path $N --ext wav
     mv ${output_path}/train.tsv ${output_path}/asr_results/test_all14.tsv 
-    cp /modelblob/users/v-ziqzhang/dataset/S2ST/asr/zh/test_all14.zh.ltr ${output_path}/asr_results/test_all14.zh.ltr
-    # cp /mnt/default/lozhou/speechdata/emime/UEDIN_mandarin_bi_data_2010/Processed_test_data/select_xtts_zh/emime_xtts_zh.zh.ltr ${output_path}/asr_results/test_all14.zh.ltr
+    # cp /modelblob/users/v-ziqzhang/dataset/S2ST/asr/zh/test_all14.zh.ltr ${output_path}/asr_results/test_all14.zh.ltr
+    head -$N /mnt/default/lozhou/speechdata/emime/UEDIN_mandarin_bi_data_2010/Processed_test_data/select_xtts_zh/emime_xtts_zh.zh.ltr > ${output_path}/asr_results/test_all14.zh.ltr
     sleep 5s
 fi
 wc -l ${output_path}/asr_results/test_all14.*
