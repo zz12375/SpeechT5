@@ -13,7 +13,7 @@ update_freq=$5
 [ -z $update_freq ] && update_freq=1
 
 CODE_ROOT=${PWD}
-MODEL_DIR="${mount}/exp/pretrain/base_speechlmp_${world_size}gpu_${update_freq}accum"
+MODEL_DIR="${mount}/exp/pretrain/base_speechlmp_wotext_${world_size}gpu_${update_freq}accum"
 [ -d $MODEL_DIR ] || mkdir -p $MODEL_DIR
 
 python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
@@ -23,12 +23,13 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   \
   task.labels='["phn"]' \
   model.label_rate=100 \
+  model.mix_with_unit=false \
   task.data=$DATA_DIR \
   task.label_dir=$DATA_DIR \
   task.text_cfg.text_data=$TEXT_DATA_DIR \
   \
-  dataset.train_subset=\"train_960+librilm.phn-ltr\" \
-  dataset.valid_subset=\"dev_clean+dev_clean.phn-ltr\" \
+  dataset.train_subset=\"train_960\" \
+  dataset.valid_subset=\"dev_clean\" \
   dataset.num_workers=2 \
   dataset.max_tokens=1400000 \
   distributed_training.distributed_world_size=${world_size} \
