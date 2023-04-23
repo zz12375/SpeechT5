@@ -27,7 +27,7 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   task.label_dir=$DATA_DIR \
   task.text_cfg.text_data=$TEXT_DATA_DIR \
   \
-  dataset.train_subset=\"train_960+librilm.phn-ltr\" \
+  dataset.train_subset=\"train_960+librilm_filt3k.phn-ltr\" \
   dataset.valid_subset=\"dev_clean+dev_clean.phn-ltr\" \
   dataset.num_workers=2 \
   dataset.max_tokens=1400000 \
