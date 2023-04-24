@@ -30,7 +30,7 @@ python $CODE_ROOT/fairseq/fairseq_cli/hydra_train.py \
   \
   dataset.train_subset=\"train_960\" \
   dataset.valid_subset=\"dev_clean\" \
-  dataset.num_workers=2 \
+  dataset.num_workers=0 \
   dataset.max_tokens=1400000 \
   distributed_training.distributed_world_size=${world_size} \
   optimization.update_freq=[${update_freq}] \
