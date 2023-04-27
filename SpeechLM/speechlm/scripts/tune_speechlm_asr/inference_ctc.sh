@@ -13,7 +13,7 @@ cpt=${model_path##*/}
 cpt=${cpt%.*}
 
 CODE_ROOT=${PWD}
-
+export PYTHONPATH=$CODE_ROOT/fairseq
 for subset in ${gen_set//,/ }; do
     results_path=$src_dir/decode_${cpt}_ctc/${subset}
     [ ! -d $results_path ] && mkdir -p $results_path
@@ -28,7 +28,7 @@ for subset in ${gen_set//,/ }; do
     common_eval.results_path=${results_path} common_eval.path=${model_path} \
     \
     common_eval.quiet=true \
-    &
+    
 done
 wait
 

@@ -18,6 +18,7 @@ path_to_lm=${DATA_DIR}/4-gram.arpa
 [ ! -f $path_to_lexicon ] && echo "Error: $path_to_lexicon not found !" && exit 1
 [ ! -f $path_to_lm ] && echo "Error: $path_to_lm not found !" && exit 1
 
+export PYTHONPATH=$CODE_ROOT/fairseq
 for subset in ${gen_set//,/ }; do
     results_path=$src_dir/decode_${cpt}_ctc/${subset}
     [ ! -d $results_path ] && mkdir -p $results_path
@@ -36,7 +37,7 @@ for subset in ${gen_set//,/ }; do
     decoding.beam=1500 \
     \
     common_eval.quiet=false \
-    &
+    
 done
 wait
 
