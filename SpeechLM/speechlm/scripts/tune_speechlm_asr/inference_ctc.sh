@@ -28,6 +28,7 @@ for subset in ${gen_set//,/ }; do
     common_eval.results_path=${results_path} common_eval.path=${model_path} \
     \
     common_eval.quiet=true \
+    common_eval.model_overrides=\"{\'w2v_path\':\'$CODE_ROOT/speechlm/config/pretrain/speechlmp_base_cfg.pt\'}\" \
     
 done
 wait

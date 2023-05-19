@@ -37,6 +37,7 @@ for subset in ${gen_set//,/ }; do
     decoding.beam=1500 \
     \
     common_eval.quiet=false \
+    common_eval.model_overrides=\"{\'w2v_path\':\'$CODE_ROOT/speechlm/config/pretrain/speechlmp_base_cfg.pt\'}\" \
     
 done
 wait
